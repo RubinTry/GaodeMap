@@ -53,7 +53,8 @@ public class Location {
 
         @Override
         public void afterTextChanged(Editable editable) {
-            getDescribe();
+
+
 
             Log.d("tag", "afterTextChanged: ");
             PoiSearch.Query query = new PoiSearch.Query(MainActivity.input_search.getText().toString(),"");
@@ -153,10 +154,11 @@ public class Location {
 
 
     //获得地址描述
-    public static void getDescribe(){
+    public static void getDescribe(String adCode){
         geocodeSearch = new GeocodeSearch(MainActivity.activity);
         geocodeSearch.setOnGeocodeSearchListener(MainActivity.activity);
-        geocodeQuery = new GeocodeQuery(MainActivity.input_search.getText().toString(),"0577");
+        Log.d("tag", "getDescribe: ");
+        geocodeQuery = new GeocodeQuery(MainActivity.input_search.getText().toString(),adCode);
         geocodeSearch.getFromLocationNameAsyn(geocodeQuery);
     }
 

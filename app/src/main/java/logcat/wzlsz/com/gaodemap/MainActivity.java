@@ -184,11 +184,17 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
 
     @Override
     public void onGeocodeSearched(GeocodeResult geocodeResult, int i) {
+        Log.d("tag", "onGeocodeSearched: ");
        if(i == 1000){
 
-           //坐标  geocodeResult.getGeocodeAddressList().get(t).getLatLonPoint()   t为第几条item
 
-           Log.d("tag", "onGeocodeSearched: "+geocodeResult.getGeocodeAddressList().get(0).getLatLonPoint());
+
+           //坐标  geocodeResult.getGeocodeAddressList().get(t).getLatLonPoint()   t为第几条item
+           Log.d("tag", "addrCode: "+geocodeResult.getGeocodeAddressList().get(0).getAdcode());
+           Log.d("tag", "describe: "+geocodeResult.getGeocodeAddressList().get(0).getLatLonPoint());
+
+           Location.getDescribe(geocodeResult.getGeocodeAddressList().get(0).getAdcode());
+
        }
     }
 }
