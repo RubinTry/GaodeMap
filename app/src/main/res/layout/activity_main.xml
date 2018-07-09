@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="logcat.wzlsz.com.gaodemap.MainActivity">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <com.amap.api.maps.MapView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/mapview"></com.amap.api.maps.MapView>
+       <RelativeLayout
+           android:layout_width="match_parent"
+           android:layout_height="match_parent">
+           <EditText
+               android:id="@+id/input_search"
+               android:paddingLeft="10dp"
+
+               android:layout_width="match_parent"
+               android:layout_height="50dp"
+               android:layout_marginLeft="30dp"
+               android:layout_marginRight="30dp"
+               android:layout_marginTop="30dp"
+               android:background="@drawable/input_box"/>
+           <LinearLayout
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:orientation="vertical"
+               android:weightSum="4"
+               android:layout_alignParentRight="true"
+               android:layout_alignParentBottom="true"
+               android:layout_marginRight="15dp"
+               android:layout_marginBottom="30dp"
+               >
+               <Button
+                   android:layout_width="match_parent"
+                   android:layout_height="0dp"
+                   android:layout_weight="1"
+                   android:text="导航地图"
+                   android:id="@+id/navMap"/>
+               <Button
+                   android:layout_width="match_parent"
+                   android:layout_height="0dp"
+                   android:layout_weight="1"
+                   android:text="夜景地图"
+                   android:id="@+id/nightMap"/>
+               <Button
+                   android:layout_width="match_parent"
+                   android:layout_height="0dp"
+                   android:layout_weight="1"
+                   android:id="@+id/dayMap"
+                   android:text="白昼地图"/>
+               <Button
+                   android:layout_width="match_parent"
+                   android:layout_height="0dp"
+                   android:layout_weight="1"
+                   android:id="@+id/starMap"
+                   android:text="卫星地图"/>
+           </LinearLayout>
+       </RelativeLayout>
+    </FrameLayout>
+
+
+</RelativeLayout>
