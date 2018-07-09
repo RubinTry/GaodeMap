@@ -38,6 +38,8 @@ public class Location {
     private static GeocodeSearch geocodeSearch;
     private static GeocodeQuery geocodeQuery;
 
+
+    //文本框监听
     public static TextWatcher changeListener = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -64,6 +66,8 @@ public class Location {
         }
     };
 
+
+    //初始化定位客户端
     public static void initClient(){
         mlocationClient = new AMapLocationClient(MainActivity.activity);
         //初始化定位参数
@@ -147,6 +151,8 @@ public class Location {
         Log.d("tag", "initLocationStyle: ");
     }
 
+
+    //获得地址描述
     public static void getDescribe(){
         geocodeSearch = new GeocodeSearch(MainActivity.activity);
         geocodeSearch.setOnGeocodeSearchListener(MainActivity.activity);

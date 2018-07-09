@@ -9,20 +9,11 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
-
-import com.amap.api.location.AMapLocation;
-import com.amap.api.location.AMapLocationClient;
-import com.amap.api.location.AMapLocationClientOption;
+import android.widget.Toast;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.maps.AMap;
-import com.amap.api.maps.AMapOptions;
 import com.amap.api.maps.MapView;
-
-import com.amap.api.maps.UiSettings;
 import com.amap.api.maps.model.LatLng;
-import com.amap.api.maps.model.Marker;
-import com.amap.api.maps.model.MyLocationStyle;
 import com.amap.api.maps.model.Polyline;
 import com.amap.api.maps.model.PolylineOptions;
 import com.amap.api.services.core.PoiItem;
@@ -55,8 +46,6 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
 
 
 
-
-
     public static MainActivity activity;
     public static EditText input_search;
 
@@ -83,9 +72,6 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
         Location.initLocationStyle();
         drawMarker();
 //        drawLine();
-
-
-
 
     }
     public void drawMarker(){
@@ -181,7 +167,8 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
 
     @Override
     public void onPoiSearched(PoiResult poiResult, int i) {
-        Log.d("tag", "result.getPois: "+poiResult.getPois().get(1).getTitle());
+        Log.d("tag", "result.getPois: "+poiResult.getPois().get(0).getTitle());
+        Toast.makeText(activity, poiResult.getPois()+"", Toast.LENGTH_SHORT).show();
 
     }
 
@@ -197,6 +184,8 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
 
     @Override
     public void onGeocodeSearched(GeocodeResult geocodeResult, int i) {
-        Log.d("tag", "onGeocodeSearched: "+geocodeResult.getGeocodeAddressList().get(0).getDistrict());
+       if(i == 1000){
+           Log.d("tag", "onGeocodeSearched: "+geocodeResult.getGeocodeAddressList().get(0).getFormatAddress());
+       }
     }
 }
