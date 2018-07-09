@@ -26,6 +26,9 @@ import com.amap.api.maps.model.MyLocationStyle;
 import com.amap.api.maps.model.Polyline;
 import com.amap.api.maps.model.PolylineOptions;
 import com.amap.api.services.core.PoiItem;
+import com.amap.api.services.geocoder.GeocodeResult;
+import com.amap.api.services.geocoder.GeocodeSearch;
+import com.amap.api.services.geocoder.RegeocodeResult;
 import com.amap.api.services.poisearch.PoiResult;
 import com.amap.api.services.poisearch.PoiSearch;
 
@@ -37,7 +40,7 @@ import java.util.List;
 import logcat.wzlsz.com.gaodemap.Map.DrawMarker;
 import logcat.wzlsz.com.gaodemap.Map.Location;
 
-public class MainActivity extends AppCompatActivity implements  View.OnClickListener, PoiSearch.OnPoiSearchListener {
+public class MainActivity extends AppCompatActivity implements  View.OnClickListener, PoiSearch.OnPoiSearchListener, GeocodeSearch.OnGeocodeSearchListener {
 
     public AMapLocationListener aMapLocationListener;
 
@@ -53,9 +56,8 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
 
 
 
-    private Marker marker;
+
     public static MainActivity activity;
-    private TextView infoTitle,infoSnippet;
     public static EditText input_search;
 
     @Override
@@ -81,6 +83,8 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
         Location.initLocationStyle();
         drawMarker();
 //        drawLine();
+
+
 
 
     }
@@ -124,11 +128,6 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
     }
 
 
-
-
-//    public void initLocationStyle(){
-//
-//    }
 
 
 
@@ -189,5 +188,15 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
     @Override
     public void onPoiItemSearched(PoiItem poiItem, int i) {
 
+    }
+
+    @Override
+    public void onRegeocodeSearched(RegeocodeResult regeocodeResult, int i) {
+
+    }
+
+    @Override
+    public void onGeocodeSearched(GeocodeResult geocodeResult, int i) {
+        Log.d("tag", "onGeocodeSearched: "+geocodeResult.getGeocodeAddressList().get(0).getDistrict());
     }
 }

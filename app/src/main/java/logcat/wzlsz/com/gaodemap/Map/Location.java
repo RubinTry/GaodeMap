@@ -11,6 +11,8 @@ import com.amap.api.location.AMapLocationListener;
 import com.amap.api.maps.AMapOptions;
 import com.amap.api.maps.UiSettings;
 import com.amap.api.maps.model.MyLocationStyle;
+import com.amap.api.services.geocoder.GeocodeQuery;
+import com.amap.api.services.geocoder.GeocodeSearch;
 import com.amap.api.services.poisearch.PoiSearch;
 
 import java.text.SimpleDateFormat;
@@ -32,6 +34,10 @@ public class Location {
     private static UiSettings mUisettings;
 
     private static PoiSearch poiSearch;
+
+    private static GeocodeSearch geocodeSearch;
+    private static GeocodeQuery geocodeQuery;
+
     public static TextWatcher changeListener = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -45,6 +51,8 @@ public class Location {
 
         @Override
         public void afterTextChanged(Editable editable) {
+            getDescribe();
+
             Log.d("tag", "afterTextChanged: ");
             PoiSearch.Query query = new PoiSearch.Query(MainActivity.input_search.getText().toString(),"");
             query.setPageSize(10);
@@ -52,6 +60,7 @@ public class Location {
             poiSearch = new PoiSearch(MainActivity.activity,query);
             poiSearch.setOnPoiSearchListener(MainActivity.activity);
             poiSearch.searchPOIAsyn();
+
         }
     };
 
@@ -136,6 +145,13 @@ public class Location {
         Log.d("tag", "logoPosition: "+ AMapOptions.LOGO_POSITION_BOTTOM_CENTER);
         mUisettings.setLogoPosition(AMapOptions.LOGO_POSITION_BOTTOM_CENTER);
         Log.d("tag", "initLocationStyle: ");
+    }
+
+    public static void getDescribe(){
+        geocodeSearch = new GeocodeSearch(MainActivity.activity);
+        geocodeSearch.setOnGeocodeSearchListener(MainActivity.activity);
+        geocodeQuery = new GeocodeQuery(MainActivity.input_search.getText().toString(),"0577");
+        geocodeSearch.getFromLocationNameAsyn(geocodeQuery);
     }
 
 }
