@@ -4,10 +4,7 @@ package logcat.wzlsz.com.gaodemap;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -25,7 +22,6 @@ import com.amap.api.maps.MapView;
 import com.amap.api.maps.UiSettings;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
-import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
 import com.amap.api.maps.model.Polyline;
 import com.amap.api.maps.model.PolylineOptions;
@@ -38,32 +34,29 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import logcat.wzlsz.com.gaodemap.Listener.MyPoiSearchListener;
 import logcat.wzlsz.com.gaodemap.Map.DrawMarker;
-import logcat.wzlsz.com.gaodemap.Util.SHA1Util;
+import logcat.wzlsz.com.gaodemap.Map.Location;
 
 public class MainActivity extends AppCompatActivity implements  View.OnClickListener, PoiSearch.OnPoiSearchListener {
-    //声明mlocationClient对象
-    public AMapLocationClient mlocationClient;
+
     public AMapLocationListener aMapLocationListener;
-    //声明mLocationOption对象
-    public AMapLocationClientOption mLocationOption = null;
+
     private MapView mapView;
     public static AMap aMap = null;
 
     private Button navMap,nightMap,dayMap,starMap;
-    private UiSettings mUisettings;
+
     private LatLng latLng;
     private List<LatLng> latLngs;
     private Polyline polyline;
 
-    private PoiSearch poiSearch;
+
 
 
     private Marker marker;
     public static MainActivity activity;
     private TextView infoTitle,infoSnippet;
-    private EditText input_search;
+    public static EditText input_search;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,9 +76,9 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
         initView();
         setOnclick();
 
-        initLocationClient();
+        Location.initClient();
 
-        initLocationStyle();
+        Location.initLocationStyle();
         drawMarker();
 //        drawLine();
 
@@ -118,31 +111,10 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
         input_search=findViewById(R.id.input_search);
 
         //监听文字内容变化
-        input_search.addTextChangedListener(changeListener);
+        input_search.addTextChangedListener(Location.changeListener);
 
     }
-    TextWatcher changeListener = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-        }
-
-        @Override
-        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-        }
-
-        @Override
-        public void afterTextChanged(Editable editable) {
-            Log.d("tag", "afterTextChanged: ");
-            PoiSearch.Query query = new PoiSearch.Query(input_search.getText().toString(),"");
-            query.setPageSize(10);
-            query.setPageNum(1);
-            poiSearch = new PoiSearch(activity,query);
-            poiSearch.setOnPoiSearchListener(activity);
-            poiSearch.searchPOIAsyn();
-        }
-    };
 
     public void setOnclick(){
         navMap.setOnClickListener(this);
@@ -151,88 +123,12 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
         starMap.setOnClickListener(this);
     }
 
-    public void initLocationClient(){
-        mlocationClient = new AMapLocationClient(getApplicationContext());
-        //初始化定位参数
-        mLocationOption = new AMapLocationClientOption();
-
-        //设置定位监听
-        mlocationClient.setLocationListener(new AMapLocationListener() {
-            @Override
-            public void onLocationChanged(AMapLocation amapLocation) {
-
-                if (amapLocation.getErrorCode() == 0) {
-                //定位成功回调信息，设置相关消息
-                amapLocation.getLocationType();//获取当前定位结果来源，如网络定位结果，详见定位类型表
-                amapLocation.getLatitude();//获取纬度
-                amapLocation.getLongitude();//获取经度
-                amapLocation.getAccuracy();//获取精度信息
-                Log.d("tag", "维度: "+amapLocation.getLatitude()+"  经度："+amapLocation.getLongitude());
-                Log.d("tag", "精度: "+amapLocation.getAccuracy());
-                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                Date date = new Date(amapLocation.getTime());
-                df.format(date);//定位时间
-                Log.d("tag", "定位时间: "+df.format(date));
-            } else {
-                //显示错误信息ErrCode是错误码，errInfo是错误信息，详见错误码表。
-                Log.e("AmapError","location Error, ErrCode:"
-                        + amapLocation.getErrorCode() + ", errInfo:"
-                        + amapLocation.getErrorInfo());
-            }
 
 
-            }
-        });
 
-
-        //设置定位模式为高精度模式，Battery_Saving为低功耗模式，Device_Sensors是仅设备模式
-        mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
-//        //设置定位间隔,单位毫秒,默认为2000ms
-//        mLocationOption.setInterval(2000);
-
-        mLocationOption.setLocationPurpose(AMapLocationClientOption.AMapLocationPurpose.SignIn);
-        if(null != mlocationClient){
-            mlocationClient.setLocationOption(mLocationOption);
-            //设置场景模式后最好调用一次stop，再调用start以保证场景模式生效
-            mlocationClient.stopLocation();
-            mlocationClient.startLocation();
-        }
-
-        mLocationOption.setNeedAddress(true);
-
-        //设置定位参数
-        mlocationClient.setLocationOption(mLocationOption);
-        // 此方法为每隔固定时间会发起一次定位请求，为了减少电量消耗或网络流量消耗，
-        // 注意设置合适的定位时间的间隔（最小间隔支持为1000ms），并且在合适时间调用stopLocation()方法来取消定位请求
-        // 在定位结束后，在合适的生命周期调用onDestroy()方法
-        // 在单次定位情况下，定位无论成功与否，都无需调用stopLocation()方法移除请求，定位sdk内部会移除
-        //启动定位
-        mlocationClient.startLocation();
-
-    }
-
-    //初始化地图控制器对象
-    public void initLocationStyle(){
-        MyLocationStyle myLocationStyle;
-        myLocationStyle = new MyLocationStyle();
-        myLocationStyle.interval(5000);
-        aMap.setMyLocationStyle(myLocationStyle);
-        aMap.setMyLocationEnabled(true);
-
-        myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_FOLLOW_NO_CENTER) ;
-        myLocationStyle.showMyLocation(true);//设置是否显示定位小蓝点，用于满足只想使用定位，不想使用定位小蓝点的场景，设置false以后图面上不再有定位蓝点的概念，但是会持续回调位置信息。
-
-        mUisettings = aMap.getUiSettings();
-        mUisettings.setZoomControlsEnabled(false);
-        mUisettings.setCompassEnabled(true);
-        mUisettings.setMyLocationButtonEnabled(true);
-        mUisettings.setScaleControlsEnabled(true);
-        mUisettings.setRotateGesturesEnabled(false);
-
-        Log.d("tag", "logoPosition: "+AMapOptions.LOGO_POSITION_BOTTOM_CENTER);
-        mUisettings.setLogoPosition(AMapOptions.LOGO_POSITION_BOTTOM_CENTER);
-        Log.d("tag", "initLocationStyle: ");
-    }
+//    public void initLocationStyle(){
+//
+//    }
 
 
 
@@ -241,8 +137,8 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
     protected void onDestroy() {
         super.onDestroy();
         mapView.onDestroy();
-        if(null != mlocationClient){
-            mlocationClient.onDestroy();
+        if(null != Location.mlocationClient){
+            Location.mlocationClient.onDestroy();
         }
     }
 
