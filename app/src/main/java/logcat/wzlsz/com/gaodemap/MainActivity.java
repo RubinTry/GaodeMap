@@ -39,6 +39,7 @@ import java.util.Date;
 import java.util.List;
 
 import logcat.wzlsz.com.gaodemap.Listener.MyPoiSearchListener;
+import logcat.wzlsz.com.gaodemap.Map.DrawMarker;
 import logcat.wzlsz.com.gaodemap.Util.SHA1Util;
 
 public class MainActivity extends AppCompatActivity implements  View.OnClickListener, PoiSearch.OnPoiSearchListener {
@@ -48,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
     //声明mLocationOption对象
     public AMapLocationClientOption mLocationOption = null;
     private MapView mapView;
-    private AMap aMap = null;
+    public static AMap aMap = null;
 
     private Button navMap,nightMap,dayMap,starMap;
     private UiSettings mUisettings;
@@ -60,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
 
 
     private Marker marker;
-    private MainActivity activity;
+    public static MainActivity activity;
     private TextView infoTitle,infoSnippet;
     private EditText input_search;
 
@@ -91,54 +92,8 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
 
     }
     public void drawMarker(){
-        //以公司所在地址为例
-        latLng = new LatLng(29.980385,120.616301);
-        final MarkerOptions markerOptions = new MarkerOptions();
 
-        markerOptions.position(latLng);
-        markerOptions.title("华航信");
-        markerOptions.snippet("我所在的公司");
-        marker = aMap.addMarker(markerOptions);
-        Log.d("tag", "Marker: "+marker);
-        AMap.OnMarkerClickListener markerClickListener = new AMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-//                marker.showInfoWindow();
-                Log.d("tag", "title: "+markerOptions.getTitle()+"  snippet:"+markerOptions.getSnippet());
-                return false;
-            }
-        };
-        aMap.setOnMarkerClickListener(markerClickListener);
-        aMap.setInfoWindowAdapter(new AMap.InfoWindowAdapter() {
-            View infoWindow = null;
-            @Override
-            public View getInfoWindow(Marker marker) {
-                if( infoWindow ==   null ){
-                    infoWindow = LayoutInflater.from(activity).inflate(R.layout.custom_info_window,null);
-                    infoTitle=infoWindow.findViewById(R.id.infoTitle);
-                    infoSnippet=infoWindow.findViewById(R.id.infoSnippet);
-                    infoTitle.setText(markerOptions.getTitle());
-                    infoSnippet.setText(markerOptions.getSnippet());
-                }
-                render(marker , infoWindow);
-                return infoWindow;
-            }
-
-            @Override
-            public View getInfoContents(Marker marker) {
-                return null;
-            }
-
-            public void render(Marker marker , View view){
-
-            }
-        });
-        aMap.setOnInfoWindowClickListener(new AMap.OnInfoWindowClickListener() {
-            @Override
-            public void onInfoWindowClick(Marker marker) {
-                marker.hideInfoWindow();
-            }
-        });
+        DrawMarker.draw();
     }
 
     public void drawLine(){
@@ -165,7 +120,8 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
         //监听文字内容变化
         input_search.addTextChangedListener(changeListener);
 
-    }TextWatcher changeListener = new TextWatcher() {
+    }
+    TextWatcher changeListener = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
